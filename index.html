@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#f9d3e3">
   <meta name="color-scheme" content="light">
 
-  <!-- PWA Relative Links -->
+  <!-- PWA (all paths relative so it works on username.github.io/hbd-priya/) -->
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/pwa-icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon-180.png">
@@ -20,25 +20,14 @@
   <meta name="format-detection" content="telephone=no">
   <meta name="msapplication-TileColor" content="#f9d3e3">
 
-  <!-- Service Worker Registration Script -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js', { scope: './' })
-          .then(reg => console.log('SW Registered successfully:', reg.scope))
-          .catch(err => console.error('SW Registration failed:', err));
-      });
-    }
-  </script>
-
-  <!-- Fonts -->
+  <!-- Fonts: Baloo 2 (UI), Caveat (English handwriting), Baloo Thambi 2 + Catamaran (Tamil). System fallbacks are in style.css -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Baloo+Thambi+2:wght@400;500;600;700&family=Catamaran:wght@400;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="./style.css">
 
-  <!-- External & Main Scripts -->
+  <!-- canvas-confetti (pinned). If it can't load, script.js falls back to its own built-in canvas confetti. -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
   <script src="./script.js" defer></script>
 </head>
@@ -48,7 +37,7 @@
   <canvas id="fx" aria-hidden="true"></canvas>
   <div class="rocket" id="rocket" aria-hidden="true" hidden></div>
 
-  <!-- Header star logo -->
+  <!-- Header star logo. A single tap sprinkles stars; tapping it 3 times in a row opens the hidden admin passcode prompt. -->
   <button class="logo" id="logo" type="button" aria-label="Little Star logo">★</button>
 
   <button class="music" id="music" type="button" aria-pressed="false" aria-label="Play music" hidden>
@@ -123,7 +112,7 @@
       </div>
     </section>
 
-    <!-- ============ SCREEN 5: SPACE FINALE ============ -->
+    <!-- ============ SCREEN 5: SPACE FINALE (cake -> rocket -> moon -> surprise card) ============ -->
     <section class="screen" id="s5" aria-labelledby="cakeHead">
       <div class="moon" id="moon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 
@@ -161,7 +150,7 @@
 
   </main>
 
-  <!-- ============ FINALE: BIRTHDAY SURPRISE CARD ============ -->
+  <!-- ============ FINALE: BIRTHDAY SURPRISE CARD (opens when the rocket reaches the moon) ============ -->
   <div class="modal finale" id="wishModal" hidden role="dialog" aria-modal="true" aria-labelledby="wishTitle">
     <span class="ring" aria-hidden="true"></span><span class="ring r2" aria-hidden="true"></span>
     <div class="wish-card" id="wishCard" tabindex="-1">
@@ -178,7 +167,10 @@
     </div>
   </div>
 
-  <!-- ============ HIDDEN CONTROLLER ============ -->
+  <!-- =====================================================================
+       HIDDEN CONTROLLER (Brother / Admin mode)
+       Opened by: tapping the header star 3 times in a row, then entering the admin passcode.
+       ===================================================================== -->
   <div class="modal" id="pinModal" hidden role="dialog" aria-modal="true" aria-labelledby="pinTitle">
     <div class="sheet small">
       <h2 id="pinTitle">🛠 Controller</h2>

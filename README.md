@@ -1,50 +1,46 @@
-# Project Little Star v2.1 — Ghibli & Space Finale Edition
+# Project Little Star — installable PWA (GitHub Pages)
 
-Plain HTML/CSS/JS PWA. No build step. All paths are relative (`./`), so it runs from any
-GitHub Pages sub-path, e.g. `username.github.io/hbd-priya/`.
+This is a static HTML/CSS/JavaScript Progressive Web App. No build step is required.
 
-## Deploy
-1. Add `photo1.jpg … photo10.jpg` (Ghibli-style) to `assets/photos/` and optionally `video1.mp4` to `assets/videos/`.
-   Missing files show a painted Ghibli-style SVG card instead.
-2. Upload everything in this folder to the root of a GitHub repo → Settings → Pages → `main` / root.
-3. Open the HTTPS URL on her phone. iOS: Safari → Share → Add to Home Screen. Android: Chrome → Install app.
-4. After changing any file, bump `CACHE` in `sw.js` (`priya-birthday-v2.4`) so installed copies refresh.
+## Deploy to GitHub Pages (important)
+
+1. Extract this ZIP.
+2. Upload **the contents of this folder** (`index.html`, `manifest.json`, `sw.js`, `script.js`, `style.css`, and `assets/`) to the **root of your GitHub repository**. Do not upload the ZIP itself and do not leave these files inside an extra nested folder.
+3. In the repository, open **Settings → Pages** and publish the branch/folder that contains `index.html` (usually `main` / `/(root)`).
+4. Wait until GitHub Pages says the site is published. Open the exact HTTPS Pages URL, for example `https://USERNAME.github.io/REPOSITORY/`.
+5. Verify these URLs load without a 404, replacing the example URL with yours:
+   - `.../manifest.json`
+   - `.../sw.js`
+   - `.../assets/icons/pwa-icon-192.png`
+
+All app paths are relative, so a project site hosted at `/REPOSITORY/` is supported.
+
+## Install
+
+- **Android (Chrome):** open the HTTPS site, wait for it to finish loading, then tap **Install app** if the button appears, or Chrome menu (⋮) → **Install app** / **Add to Home screen**.
+- **Windows/macOS/Linux (Chrome or Edge):** open the HTTPS site and use the **Install** icon in the address bar, or browser menu → **Install Project Little Star**. The in-page Install app button appears when the browser offers its install prompt.
+- **iPhone/iPad:** open the site in Safari → Share → **Add to Home Screen**. iOS does not show the same automatic install prompt.
+
+## If you see “Browser could not open app”
+
+1. Make sure the site URL ends with the repository name and `/` for a project site (for example `/little-star/`), not a local file path and not the repository's GitHub source-code URL.
+2. Open `manifest.json` on the deployed site and confirm it displays JSON rather than a GitHub 404 page.
+3. In Chrome, open DevTools → **Application** → **Manifest** and check for errors. Under **Service Workers**, unregister an old worker, then reload the site. On mobile, clear the site's stored data/cache or remove the old home-screen shortcut and install again.
+4. Ensure `index.html`, `manifest.json`, `sw.js`, `script.js`, `style.css`, and the `assets` directory are at the published root together.
+5. GitHub Pages must be HTTPS; PWA installation does not work from a plain local `file://` URL.
+
+## App details
+
+- Start URL and scope are `./`, which supports GitHub Pages repository subpaths.
+- App icons have separate `any` and `maskable` declarations.
+- Service-worker cache was bumped to `priya-birthday-v2.4` so previously cached app-shell files are refreshed.
+- Browser install prompts are browser-controlled and do not appear in every browser. The manual browser menu / iOS instructions above still apply.
 
 ## Passcodes
+
 | Who | Default | Where it works |
 |---|---|---|
-| Priya | `0000` | Lock screen — asked on **every** app open (nothing is remembered) |
-| Admin | `1234` | Only through the secret star trigger below |
+| Priya | `0000` | Lock screen |
+| Admin | `1234` | Secret admin trigger |
 
-**Secret admin trigger:** tap the ★ in the top-left corner **3 times in a row** (within ~1.2 s between taps).
-Enter the admin passcode → Controller opens. A wrong code throws you back to Priya's lock screen.
-Change both passcodes right away in Controller → Passcodes.
-
-## Sister journey
-Lock → ribbon envelope → memories (10 photos + video) → 4-question quiz → Tamil letter →
-**space finale**: blow out the 5 candles → a Ghibli-style rocket lifts off the cake, swerves up through the
-night sky to the glowing full moon → the moon flashes and a birthday surprise card bursts open with
-confetti while the music fades in.
-
-## Controller tabs
-Passcodes · Quiz · Letter · Wish (text on the moon card) · Captions · Media · Backup.
-**Media** edits the path of every photo, the video and the music (relative `./assets/...` paths or `https://` links),
-saved in `localStorage`, with a found/missing check.
-
-## Notes
-- localStorage keys are prefixed `priya-birthday-v2:` and the service-worker cache is `priya-birthday-v2.1`; it only
-  deletes caches starting with `priya-birthday-`, so other apps (e.g. ChronoPulse) on the same origin are untouched.
-  Edits saved by v1 are carried over automatically on first run.
-- Edits are per-browser: Controller → Backup → **Copy update link** and open it on Priya's phone.
-- Passcodes are 4 digits, stored hashed, but the defaults are in `script.js`: a playful lock, not real security.
-- If you replace a photo with a new file of the *same name*, bump `CACHE` in `sw.js` (photos are cached first).
-- Video and audio are streamed by the browser (not cached by the service worker).
-- `bg-music.mp3` is a music-box "Happy Birthday"; if missing, the app synthesises the tune.
-
-## v2.1 fixes
-- Carousel: one card per step, click-to-centre, exact centring (`offsetLeft - clientWidth/2 + card.clientWidth/2`).
-- Photos load whether the file is `.jpg`, `.jpeg`, `.png` or `.webp`.
-- Admin checker really loads each file: ✓ green when it loads, ✗ red when it doesn't.
-- Passcodes: localStorage `sister_pin` / `admin_pin` are read first (defaults 2008 / 9999 only when they are null).
-  The keys are not prefixed, so another app on the same github.io origin that also uses those names would clash.
-- Service worker: cache `priya-birthday-v2.1`, page code is network-first so stale scripts are flushed.
+Tap the ★ in the top-left corner three times quickly to open the admin flow. Passcodes are a playful lock, not strong security.

@@ -1626,6 +1626,34 @@ $("#resetAll").addEventListener("click", () => {
    --------------------------------------------------------------------- */
 updateMusicPill();
 
+// Native install prompt (Chrome/Edge on supported desktop and Android browsers).
+let deferredInstallPrompt = null;
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  let installButton = document.getElementById("pwaInstallButton");
+  if (!installButton) {
+    installButton = document.createElement("button");
+    installButton.id = "pwaInstallButton";
+    installButton.type = "button";
+    installButton.textContent = "Install app ✨";
+    installButton.setAttribute("aria-label", "Install Project Little Star app");
+    installButton.style.cssText = "position:fixed;right:16px;bottom:16px;z-index:9999;border:0;border-radius:999px;padding:12px 18px;background:#8b5cf6;color:#fff;font:600 14px system-ui,sans-serif;box-shadow:0 5px 20px #0002;cursor:pointer";
+    document.body.appendChild(installButton);
+    installButton.addEventListener("click", async () => {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      installButton.remove();
+    });
+  }
+});
+window.addEventListener("appinstalled", () => {
+  deferredInstallPrompt = null;
+  document.getElementById("pwaInstallButton")?.remove();
+});
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(err => console.warn("Service worker not registered:", err));
