@@ -7,12 +7,12 @@
    - Requests outside this app's scope are left alone.
    - Video + audio are NOT intercepted: browsers stream them with Range
      requests, which a simple cache can't serve correctly.
-   To ship an update: bump CACHE (e.g. priya-birthday-v2.3) and re-publish.
+   To ship an update: bump CACHE (e.g. priya-birthday-v2.4) and re-publish.
    On activate every older "priya-birthday-*" cache (v1, v2 …) is deleted, so stale scripts are flushed.
    Page code (html / css / js / json) is NETWORK-FIRST: a fresh script.js is used whenever the phone is
    online; the cache is only the offline fallback. Photos stay cache-first.
    ===================================================================== */
-const CACHE = "priya-birthday-v2.2";
+const CACHE = "priya-birthday-v2.3";
 const PREFIX = "priya-birthday-";
 
 const CORE = [

@@ -1628,7 +1628,7 @@ updateMusicPill();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(err => console.warn("Service worker not registered:", err));
+    navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(err => console.warn("Service worker not registered:", err));
   });
   let swReloaded = false;                           // a new worker took over: refresh once, but only while still on the lock screen
   navigator.serviceWorker.addEventListener("controllerchange", () => {

@@ -8,7 +8,7 @@ GitHub Pages sub-path, e.g. `username.github.io/hbd-priya/`.
    Missing files show a painted Ghibli-style SVG card instead.
 2. Upload everything in this folder to the root of a GitHub repo → Settings → Pages → `main` / root.
 3. Open the HTTPS URL on her phone. iOS: Safari → Share → Add to Home Screen. Android: Chrome → Install app.
-4. After changing any file, bump `CACHE` in `sw.js` (`priya-birthday-v2.3`) so installed copies refresh.
+4. After changing any file, bump `CACHE` in `sw.js` (`priya-birthday-v2.4`) so installed copies refresh.
 
 ## Passcodes
 | Who | Default | Where it works |
