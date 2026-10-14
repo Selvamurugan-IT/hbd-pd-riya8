@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Project Little Star ✨</title>
+  <meta name="description" content="A tiny birthday surprise, just for you.">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#f9d3e3">
+  <meta name="color-scheme" content="light">
+
+  <!-- PWA (all paths relative so it works on username.github.io/hbd-priya/) -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/pwa-icon-192.png">
+  <link rel="apple-touch-icon" href="./assets/icons/pwa-icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Little Star">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- Fonts: Baloo 2 (UI), Caveat (English handwriting), Baloo Thambi 2 + Catamaran (Tamil). System fallbacks are in style.css -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Baloo+Thambi+2:wght@400;500;600;700&family=Catamaran:wght@400;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./style.css">
+
+  <!-- canvas-confetti (pinned). If it can't load, script.js falls back to its own built-in canvas confetti. -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <div class="stars" id="stars" aria-hidden="true"></div>
+  <canvas id="space" aria-hidden="true"></canvas>
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <div class="rocket" id="rocket" aria-hidden="true" hidden></div>
+
+  <!-- Header star logo. A single tap sprinkles stars; tapping it 3 times in a row opens the hidden admin passcode prompt. -->
+  <button class="logo" id="logo" type="button" aria-label="Little Star logo">★</button>
+
+  <button class="music" id="music" type="button" aria-pressed="false" aria-label="Play music" hidden>
+    <span class="music-icon" aria-hidden="true">▶</span><span class="music-text">Music</span>
+  </button>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <noscript><p style="padding:24px;text-align:center">This little surprise needs JavaScript. Please turn it on 💖</p></noscript>
+
+  <main id="app">
+
+    <!-- ============ SCREEN 1: PASSCODE LOCK ============ -->
+    <section class="screen active" id="s1" aria-labelledby="t1">
+      <div class="card lock" id="lockCard">
+        <div class="badge" aria-hidden="true">★</div>
+        <h1 id="t1">Enter Secret Code to Unlock Your Surprise ✨</h1>
+        <div class="dots" id="dots" role="img" aria-label="0 of 4 digits entered"><i></i><i></i><i></i><i></i></div>
+        <p class="hint" id="hint" role="status">4 digits podu, chellam 🔐</p>
+        <div class="pad" id="pad"></div>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN 2: SECRET ENVELOPE ============ -->
+    <section class="screen" id="s2" aria-labelledby="t2">
+      <h1 id="t2">Ssshh… oru secret letter irukku 💌</h1>
+      <p class="sub">Tap the envelope to untie the ribbon</p>
+
+      <button class="env" id="env" type="button" aria-label="Tap to untie the ribbon and open the envelope">
+        <span class="env-back"></span>
+        <span class="env-paper"><span>For my<br>Little Star ⭐</span></span>
+        <span class="env-front"></span>
+        <span class="env-flap"></span>
+        <span class="env-rib env-rib-v"></span>
+        <span class="env-rib env-rib-h"></span>
+        <span class="env-bow" aria-hidden="true"><b>★</b></span>
+      </button>
+
+      <p class="tap-hint" id="envHint">tap tap tap 👆</p>
+    </section>
+
+    <!-- ============ SCREEN 3: OUR MEMORIES (photos + video) ============ -->
+    <section class="screen" id="s3" aria-labelledby="t3">
+      <h1 id="t3">Our Memories 📸</h1>
+      <p class="sub">Swipe pannu — ovvoru photo-kum oru kadhai irukku 😄</p>
+
+      <div class="rail" id="rail" tabindex="0" aria-label="Photo and video memories. Swipe sideways to browse."></div>
+
+      <div class="rail-nav">
+        <button class="round" id="prev" type="button" aria-label="Previous memory">‹</button>
+        <div class="pdots" id="pdots" aria-hidden="true"></div>
+        <button class="round" id="next" type="button" aria-label="Next memory">›</button>
+      </div>
+
+      <button class="btn" id="to4" type="button">Next, oru chinna quiz 🎯</button>
+    </section>
+
+    <!-- ============ SCREEN 4: QUIZ + TAMIL LETTER ============ -->
+    <section class="screen" id="s4" aria-labelledby="qtext">
+      <div class="card quiz" id="quiz">
+        <div class="qdots" id="qdots" aria-hidden="true"></div>
+        <p class="sub" id="qcount"></p>
+        <h2 id="qtext"></h2>
+        <div class="opts" id="opts"></div>
+      </div>
+
+      <div class="letter-wrap" id="letterWrap" hidden>
+        <article class="note" aria-label="A birthday letter for you">
+          <div id="letterBody" lang="ta"></div>
+        </article>
+        <button class="btn" id="to5" type="button">One last surprise 🎂</button>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN 5: SPACE FINALE (cake -> rocket -> moon -> surprise card) ============ -->
+    <section class="screen" id="s5" aria-labelledby="cakeHead">
+      <div class="moon" id="moon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+
+      <div class="headslot">
+        <h1 id="cakeHead">Tap the candles to blow them out! 🎂</h1>
+        <div class="banner" id="banner" hidden>
+          <h2>Happy 18th Birthday Little Star! 🌟</h2>
+          <p>Your wish has reached the moon 🌕</p>
+        </div>
+      </div>
+
+      <div class="cake lit" id="cake">
+        <div class="glow" aria-hidden="true"></div>
+
+        <div class="candles" id="candles">
+          <button class="candle" type="button" aria-label="Blow out candle 1"><span class="smoke"></span><span class="flame"></span><span class="wick"></span><span class="stick"></span></button>
+          <button class="candle" type="button" aria-label="Blow out candle 2"><span class="smoke"></span><span class="flame"></span><span class="wick"></span><span class="stick"></span></button>
+          <button class="candle" type="button" aria-label="Blow out candle 3"><span class="smoke"></span><span class="flame"></span><span class="wick"></span><span class="stick"></span></button>
+          <button class="candle" type="button" aria-label="Blow out candle 4"><span class="smoke"></span><span class="flame"></span><span class="wick"></span><span class="stick"></span></button>
+          <button class="candle" type="button" aria-label="Blow out candle 5"><span class="smoke"></span><span class="flame"></span><span class="wick"></span><span class="stick"></span></button>
+        </div>
+
+        <div class="tier t3" aria-hidden="true"></div>
+        <div class="tier t2" aria-hidden="true"><b>18</b></div>
+        <div class="tier t1" aria-hidden="true"></div>
+        <div class="plate" aria-hidden="true"></div>
+      </div>
+
+      <p class="sub" id="candleNote" role="status">Ovvoru candle-um oru wish ✨ — tap each one</p>
+      <div class="after" id="afterRow" hidden>
+        <button class="btn" id="reopen" type="button">Open my card 💌</button>
+        <button class="btn ghost" id="again" type="button">Replay 🔁</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FINALE: BIRTHDAY SURPRISE CARD (opens when the rocket reaches the moon) ============ -->
+  <div class="modal finale" id="wishModal" hidden role="dialog" aria-modal="true" aria-labelledby="wishTitle">
+    <span class="ring" aria-hidden="true"></span><span class="ring r2" aria-hidden="true"></span>
+    <div class="wish-card" id="wishCard" tabindex="-1">
+      <svg class="wish-art" id="wishArt" viewBox="0 0 400 190" role="img" aria-label="A little rocket flying to a glowing full moon"></svg>
+      <div class="wish-body">
+        <h2 id="wishTitle">Happy 18th Birthday, Priya Dharshini! 🌟</h2>
+        <div class="wish-text" id="wishText"></div>
+        <p class="wish-sign">— Un Annan 💖</p>
+        <div class="row">
+          <button class="btn ghost" id="wishMusic" type="button" aria-pressed="false">🎵 Music</button>
+          <button class="btn" id="wishClose" type="button">Close 💫</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       HIDDEN CONTROLLER (Brother / Admin mode)
+       Opened by: tapping the header star 3 times in a row, then entering the admin passcode.
+       ===================================================================== -->
+  <div class="modal" id="pinModal" hidden role="dialog" aria-modal="true" aria-labelledby="pinTitle">
+    <div class="sheet small">
+      <h2 id="pinTitle">🛠 Controller</h2>
+      <p class="sub">Enter the admin passcode</p>
+      <input id="adminPinInput" class="field pin-field" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="Admin passcode">
+      <p class="hint" id="adminPinMsg" role="status"></p>
+      <div class="row">
+        <button class="btn ghost" id="pinCancel" type="button">Cancel</button>
+        <button class="btn" id="pinOk" type="button">Open</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="admin" hidden role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+    <div class="sheet admin">
+      <div class="admin-head">
+        <h2 id="adminTitle">🛠 Controller</h2>
+        <button class="round" id="adminClose" type="button" aria-label="Close controller">×</button>
+      </div>
+      <p class="warn" id="defaultPinWarn" hidden>⚠ You are still on the default admin passcode. Change it in the <b>Passcodes</b> tab.</p>
+
+      <div class="tabs" id="tabs" role="tablist">
+        <button type="button" role="tab" data-tab="pins" aria-selected="true">Passcodes</button>
+        <button type="button" role="tab" data-tab="quiz" aria-selected="false">Quiz</button>
+        <button type="button" role="tab" data-tab="letter" aria-selected="false">Letter</button>
+        <button type="button" role="tab" data-tab="wish" aria-selected="false">Wish</button>
+        <button type="button" role="tab" data-tab="caps" aria-selected="false">Captions</button>
+        <button type="button" role="tab" data-tab="media" aria-selected="false">Media</button>
+        <button type="button" role="tab" data-tab="backup" aria-selected="false">Backup</button>
+      </div>
+
+      <!-- PINs -->
+      <section class="pane" data-pane="pins">
+        <label class="lbl" for="newSisterPin">Priya's passcode (4 digits)</label>
+        <input id="newSisterPin" class="field" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
+        <label class="lbl" for="newAdminPin">Admin passcode (4 digits)</label>
+        <input id="newAdminPin" class="field" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
+        <p class="note-s">Leave a box empty to keep that passcode as it is. The two passcodes must be different. The app asks for Priya's passcode every time it is opened.</p>
+        <button class="btn" id="savePins" type="button">Save passcodes</button>
+      </section>
+
+      <!-- Quiz -->
+      <section class="pane" data-pane="quiz" hidden>
+        <div id="quizEditor"></div>
+        <button class="btn" id="saveQuiz" type="button">Save quiz</button>
+        <button class="btn ghost" id="resetQuiz" type="button">Restore default quiz</button>
+      </section>
+
+      <!-- Letter -->
+      <section class="pane" data-pane="letter" hidden>
+        <label class="lbl" for="letterEdit">Birthday letter</label>
+        <p class="note-s">One line = one paragraph. The <b>last line</b> is the sign-off.</p>
+        <textarea id="letterEdit" class="field area" rows="14" lang="ta"></textarea>
+        <button class="btn" id="saveLetter" type="button">Save letter</button>
+        <button class="btn ghost" id="resetLetter" type="button">Restore default letter</button>
+      </section>
+
+      <!-- Finale wish -->
+      <section class="pane" data-pane="wish" hidden>
+        <label class="lbl" for="wishEdit">Birthday wish on the moon card</label>
+        <p class="note-s">Shown on the surprise card after the rocket reaches the moon. One line = one paragraph.</p>
+        <textarea id="wishEdit" class="field area wish-area" rows="7"></textarea>
+        <button class="btn" id="saveWish" type="button">Save wish</button>
+        <button class="btn ghost" id="resetWish" type="button">Restore default wish</button>
+      </section>
+
+      <!-- Captions -->
+      <section class="pane" data-pane="caps" hidden>
+        <div id="capEditor"></div>
+        <button class="btn" id="saveCaps" type="button">Save captions</button>
+        <button class="btn ghost" id="resetCaps" type="button">Restore default captions</button>
+      </section>
+
+      <!-- Media path preview -->
+      <section class="pane" data-pane="media" hidden>
+        <p class="note-s">Change a path to point at any file in this app, e.g. <code>./assets/photos/ghibli-1.jpg</code>, or at an <code>https://</code> link. Missing files show a Ghibli-style painted card to Priya.</p>
+        <div id="mediaList" class="media-list"></div>
+        <button class="btn" id="saveMedia" type="button">Save paths</button>
+        <button class="btn ghost" id="recheck" type="button">Check files</button>
+        <button class="btn ghost" id="resetMedia" type="button">Restore default paths</button>
+      </section>
+
+      <!-- Backup / transfer -->
+      <section class="pane" data-pane="backup" hidden>
+        <p class="note-s"><b>Important:</b> edits are saved in <i>this browser only</i>. To put them on Priya's phone, send her the update link (or paste the backup code on her device).</p>
+        <button class="btn" id="copyLink" type="button">Copy update link 🔗</button>
+        <button class="btn ghost" id="copyCode" type="button">Copy backup code</button>
+        <label class="lbl" for="importCode">Import a backup code or update link</label>
+        <textarea id="importCode" class="field area" rows="4" placeholder="Paste here…"></textarea>
+        <button class="btn" id="doImport" type="button">Import</button>
+        <hr>
+        <button class="btn ghost danger" id="resetAll" type="button">Reset everything to defaults</button>
+      </section>
+    </div>
+  </div>
+
+</body>
+</html>
