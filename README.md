@@ -13,8 +13,8 @@ GitHub Pages sub-path, e.g. `username.github.io/hbd-priya/`.
 ## Passcodes
 | Who | Default | Where it works |
 |---|---|---|
-| Priya | `2008` | Lock screen — asked on **every** app open (nothing is remembered) |
-| Admin | `9999` | Only through the secret star trigger below |
+| Priya | `0000` | Lock screen — asked on **every** app open (nothing is remembered) |
+| Admin | `1234` | Only through the secret star trigger below |
 
 **Secret admin trigger:** tap the ★ in the top-left corner **3 times in a row** (within ~1.2 s between taps).
 Enter the admin passcode → Controller opens. A wrong code throws you back to Priya's lock screen.
